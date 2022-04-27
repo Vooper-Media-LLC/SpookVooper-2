@@ -23,13 +23,27 @@ public class District
 
     [InverseProperty("District")]
     public ICollection<County> Counties { get; set;}
-    // the group that represents this district 
-    [ForeignKey("GroupId")]
-    public Group Group { get; set;}
+
+    public Group Group { 
+        get {
+            return DBCache.Get<Group>(GroupId)!;
+        }
+    }
 
     [EntityId]
     public string GroupId { get; set; }
 
     [EntityId]
-    public string? Senator_Id { get; set;}
+    public string? SenatorId { get; set;}
+
+    [EntityId]
+    public string? GovernorId { get; set;}
+
+    [VarChar(128)]
+    public string? FlagUrl { get; set; }
+
+    public static District Find(string id)
+    {
+        return DBCache.GetAll<District>().FirstOrDefault(x => x.Id == id)!;
+    }
 }

@@ -1,0 +1,61 @@
+@model Group
+@{
+    ViewData["Title"] = "Create Group";
+}
+
+<div class="container vw-100">
+    <div class="col-12">
+        <h4>@ViewData["Title"]</h4>
+        @await Html.PartialAsync("_StatusMessage", TempData["StatusMessage"])
+
+
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="GroupType"></label>
+                        <br />
+                        <select class="form-control" asp-for="GroupType" asp-items="Html.GetEnumSelectList<GroupTypes>()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DistrictId"></label>
+                        <br />
+                        <select class="form-control" asp-for="DistrictId" asp-items="DBCache.GetAll<District>().Select(x => new SelectListItem() { Text = x.Name, Value = x.Id})"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" rows="6" class="form-control"> </textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Image_Url"></label>
+                        <input asp-for="Image_Url" class="form-control" />
+                        <span asp-validation-for="Image_Url" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.OwnerId)
+
+            <div class="form-group">
+                <div class="container" style="align-content:flex-start">
+                    <div class="d-flex">
+                        <div class="flex-column" style="margin-right:5px; margin-left: -15px">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    @section Scripts {
+        @await Html.PartialAsync("_ValidationScriptsPartial")
+    }
+</div>

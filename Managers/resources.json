@@ -1,0 +1,32 @@
+{
+    "Material_Groups": [
+        {
+            "Name":"Food",
+            "Materials": ["Corn", "Wheat"]
+        },
+        {
+            "Name":"Ore",
+            "Materials": ["Iron Ore","Gold ore","Crystallite ore","Coal ore","Copper ore"]
+        },
+        {
+            "Name": "Metals",
+            "Materials": ["Copper", "Iron", "Gold"]
+        },
+        {
+            "Name":"Components",
+            "Materials": ["Copper wire"]
+        }
+    ],
+    "Recipes": [
+        {
+            "Name": "Copper Processing",
+            "Inputs": {
+                "Copper Ore": 1
+            },
+            "Outputs": {
+                "Copper": 1
+            },
+            "ProcessingCost": 1
+        }
+    ]
+}

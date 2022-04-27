@@ -3,6 +3,7 @@ using SV2.Database.Models.Users;
 using SV2.Database.Models.Groups;
 using SV2.Database.Models.Economy;
 using SV2.Database.Models.Items;
+using SV2.Database.Models.Districts;
 using SV2.Database.Models.Factories;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -115,11 +116,14 @@ public static class DBCache
         foreach(Factory factory in VooperDB.Instance.Factories) {
             tasks.Add(DBCache.Put<Factory>(factory.Id, factory));
         }
-        foreach(Recipe recipe in VooperDB.Instance.Recipes) {
-            tasks.Add(DBCache.Put<Recipe>(recipe.Id, recipe));
-        }
         foreach(UBIPolicy policy in VooperDB.Instance.UBIPolicies) {
             tasks.Add(DBCache.Put<UBIPolicy>(policy.Id, policy));
+        }
+        foreach(District district in VooperDB.Instance.Districts) {
+            tasks.Add(DBCache.Put<District>(district.Id, district));
+        }
+        foreach(GroupRole role in VooperDB.Instance.GroupRoles) {
+            tasks.Add(DBCache.Put<GroupRole>(role.Id, role));
         }
         await Task.WhenAll(tasks);
 
@@ -134,8 +138,8 @@ public static class DBCache
         VooperDB.Instance.TradeItems.UpdateRange(GetAll<TradeItem>());
         VooperDB.Instance.TradeItemDefinitions.UpdateRange(GetAll<TradeItemDefinition>());
         VooperDB.Instance.Factories.UpdateRange(GetAll<Factory>());
-        VooperDB.Instance.Recipes.UpdateRange(GetAll<Recipe>());
         VooperDB.Instance.TaxPolicies.UpdateRange(GetAll<TaxPolicy>());
+        VooperDB.Instance.Districts.UpdateRange(GetAll<District>());
         await VooperDB.Instance.SaveChangesAsync();
     }
 }

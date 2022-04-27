@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using SV2.Managers;
+
+<!DOCTYPE html>
 <html lang="en-us">
 <head>
     <!--
@@ -93,10 +95,10 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="SearchDropdown">
                                 @{
-                                    User user = null;
+                                    User? user = UserManager.GetUser(Context);
                                     //if (User != null) { user = await userManager.GetUserAsync(User); }
 
-                                    if (user != null)
+                                    if (user is not null)
                                     {
                                         <a class="dropdown-item" asp-controller="Manage" asp-action="Index">My Account</a>
                                         <a class="dropdown-item" asp-controller="User" asp-action="Info" asp-route-svid="@user.Id">My Page</a>
@@ -148,8 +150,8 @@
         </div>
     </footer>
 
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="/js/chart.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

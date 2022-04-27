@@ -1,0 +1,165 @@
+@model District
+
+@{ 
+    if (Model != null)
+    {
+        ViewData["Title"] = Model.Name;
+    }
+}
+
+<head>
+    <meta property="og:title" content="@Model.Name">
+    <meta name="keywords" content="SpookVooper, Vooperia, Districts, Government">
+    <meta property="og:description" content="@Model.Description">
+    <meta property="og:url" content="https://spookvooper.com/District/View/@Model.Name">
+</head>
+
+<!-- Main row for page -->
+<div class="d-flex flex-row align-content-center" style="width:100%">
+    <!-- Leftmost column -->
+    <div class="p-2 flex-shrink-1 ms-auto"></div>
+
+    <!-- Center column -->
+    <div class="p-4" style="width:80em">
+
+        @await Html.PartialAsync("_StatusMessage", TempData["StatusMessage"])
+
+        @{
+            if (Model is not null)
+            {
+                User? senator = null;
+                if (Model.SenatorId is not null) {
+                    senator = DBCache.Get<User>(Model.SenatorId);
+                }
+                User? user = UserManager.GetUser(Context);
+
+                if (user != null && senator != null && (senator.Id == user.Id || user.Name == "SpikeViper"))
+                {
+                    <a asp-route-id="@Model.Name" asp-action="Edit" asp-controller="District" class="btn btn-primary">Modify</a>
+                }
+
+                <div class="d-flex align-content-center align-items-center">
+
+                    <div class="ms-auto" style="display: inline-block; vertical-align:central; height:100%">
+                        <img src="@Model.FlagUrl" style="width:5em; vertical-align:middle" />
+                    </div>
+
+                    <div style="display:inline-block; margin:2em;">
+                        <h2 style="text-align:center" class="display-4">The District of</h2>
+                        <h1 style="text-align:center" class="display-3">@Model.Name</h1>
+                    </div>
+
+                    <div class="me-auto" style="display: inline-block; vertical-align:central; height:100%">
+                        <img src="@Model.FlagUrl" style="width:5em; vertical-align:middle" />
+                    </div>
+
+                </div>
+
+                <br />
+
+                if (senator != null)
+                {
+                    <div class="p-2 align-self-center" style="text-align:center">
+
+                        @{
+                            string senateName = "None.";
+                            if (senator != null)
+                            {
+                                senateName = senator.Name;
+                            }
+                        }
+
+                        <h2>Elected Senator: @senateName</h2>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4 col-sm-offset-4">
+                                    <div>
+                                        @if (senator != null)
+                                        {
+                                            // TODO: add getting party using a party system that we will create
+                                            //var party = senator.GetParty();
+                                            string color = "ffffff";
+
+                                            //if (party != null)
+                                            //{
+                                            //    color = party.Color;
+                                            //}
+
+                                            <br />
+                                            <img class="govpfp" style="box-shadow: 0px 0px 0px 7px #{@color};" src="@senator.Image_Url" />
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-sm-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-2 align-self-center" style="text-align:center">
+                        <h3>Elected Senator: None!</h3>
+                    </div>
+                }
+
+                int population = DBCache.GetAll<User>().Count(x => x.DistrictId == Model.Id);
+
+                <div class="p-2 align-self-center" style="text-align:center">
+                    <h3>Population: @population</h3>
+                </div>
+
+                if (user != null)
+                {
+                    if (user.DistrictId != null && user.DistrictId == Model.Id)
+                    {
+                        <div class="p-2 align-self-center" style="text-align:center">
+                            <h3>You live here.</h3>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-2 align-self-center" style="text-align:center">
+                            <a asp-action="MoveDistrict" asp-controller="District" asp-route-id="@Model.Id" class="btn btn-outline-primary">Move Here</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="p-2 align-self-center" style="text-align:center">
+                        <h3>Log in to move!</h3>
+                    </div>
+                }
+
+                <br />
+
+                if (user!.Id == Model.GovernorId) {
+                    <div class="p-2 align-self-center" style="text-align:center">
+                            <a asp-controller="District" asp-action="EditPolicies" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit Policies</a>
+                    </div>
+                }
+
+                <br />
+                <br />
+                <br />
+                <br />
+
+                if (Model.Description != null)
+                {
+                    <h1 style="text-align:left">Description</h1>
+                    <p class="p" style="font-size:large">@Html.Raw(@Westwind.AspNetCore.Markdown.Markdown.Parse(Model.Description, sanitizeHtml: true))</p>
+                }
+
+                <br />
+                <hr />
+            } 
+            else
+            {
+                <h1 style="text-align:center" class="display-4">District not found!</h1>
+            }
+        }
+    </div>
+
+    <!-- Rightmost column -->
+    <div class="p-4 flex-shrink-1 me-auto"></div>
+</div>

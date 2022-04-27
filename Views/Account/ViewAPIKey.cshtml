@@ -1,0 +1,32 @@
+@model string
+@{
+    ViewData["Title"] = "API Key";
+}
+
+<div class="container vw-100">
+    <div class="col-12">
+        <h4>@ViewData["Title"]</h4>
+
+        <p>Do not share this key with anyone! It's basically a second password.</p>
+        <p>Connecting an account in Nerdcraft will replace this key!</p>
+        <input class="form-control" value="@Model" disabled />
+
+        <br />
+
+        <b>Terms of Use</b>
+        <p>By using an API key you agree to the following:</p>
+        <p>1. The API will be used no more than once every five seconds across all endpoints</p>
+        <p>2. The API will not be used for tasks in which unintended results may occur (ie exploits)</p>
+        <p>3. The API key will not be shared</p>
+        <p>4. The API key will be used under a single IP address (if possible)</p>
+        <p>5. The API key will not be used for malicious purposes</p>
+        <p>6. The API key will not be traded nor sold</p>
+        <p>7. The API key will only be used on routes allowed under #sv-developer</p>
+        <p>8. The API key will be used instead of cookie forgery - cookie forgery is not allowed</p>
+        <p>9. If requested, you will halt using the API key</p>
+        <p>10. Repeated requests which result in no net change are considered spam and will not be tolerated</p>
+        <p>11. Impersonation using API keys is forbidden</p>
+        <p>12. Forced cracking or stealing an API key will result in a permanent ban</p>
+
+    </div>
+</div>

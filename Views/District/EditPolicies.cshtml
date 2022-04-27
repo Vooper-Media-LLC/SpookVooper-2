@@ -1,0 +1,130 @@
+@model DistrictPolicyModel
+
+@{
+    ViewData["Title"] = $"Edit Policies for {Model.District.Name}";
+}
+
+@{
+    User user = UserManager.GetUser(Context)!;
+}
+
+<center>
+<div class="container vw-100">
+    <div class="col-12">
+
+        @await Html.PartialAsync("_StatusMessage", TempData["StatusMessage"])
+
+        <h3 style="text-align:center">@ViewData["Title"]</h3>
+        <h2 style="text-align:center">@Model.District.Name</h2>
+
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <br />
+        <hr />
+        <br />
+
+        <form method="post">
+            @Html.HiddenFor(x => x.DistrictId)
+            <div class="container">
+                <div class="form-group">
+                    <div class="container" style="align-content:flex-start">
+                        <div class="d-flex">
+                            <div class="flex-column" style="margin-right:-52%; margin-left: 48%">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center flex-wrap">
+                    <div class="m-2" style="width:300px">
+                        <h4>UBI (daily)</h4>
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @for (int i = 0; i < Model.UBIPolicies.Count(); i++)
+                        {
+                            <div class="form-group">
+                                @if (Model.UBIPolicies[i].ApplicableRank is not null) {
+                                    <label asp-for="@Model.UBIPolicies[i].Rate">@Model.UBIPolicies[i].ApplicableRank.ToString()</label>
+                                }
+                                else {
+                                    <label asp-for="@Model.UBIPolicies[i].Rate">Everyone</label>
+                                }
+                                <input asp-for="@Model.UBIPolicies[i].Rate" class="form-control" />
+                                <span asp-validation-for="@Model.UBIPolicies[i].Rate" class="text-danger"></span>
+                            </div>
+                        }
+                        <br>
+                        <h4>Other taxes</h4>
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @for (int i = 0; i < 7; i++)
+                        {
+                            <div class="form-group">
+                                <label>@Model.TaxPolicies[i].taxType Tax</label>
+                                <input asp-for="@Model.TaxPolicies[i].Minimum" class="form-control" />
+                                <input asp-for="@Model.TaxPolicies[i].Maximum" class="form-control" />
+                                <label>The amount between the two above boxes will be taxed at (%)</label>
+                                <input asp-for="@Model.TaxPolicies[i].Rate" class="form-control" />
+                                @Html.HiddenFor(x => x.TaxPolicies[i].Id)
+                                @Html.HiddenFor(x => x.TaxPolicies[i].taxType)
+                                <span asp-validation-for="@Model.TaxPolicies[i].Rate" class="text-danger"></span>
+                            </div>
+                            <br>
+                            <br>
+                        }
+
+                    </div>
+                    <div class="m-2" style="width:300px;margin-left:70px !important;">
+                        <h4>Personal Income Tax Rates (in %)</h4>
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @for (int i = 7; i < 11; i++) {
+                            <div class="form-group">
+                                <input asp-for="@Model.TaxPolicies[i].Minimum" class="form-control" />
+                                <input asp-for="@Model.TaxPolicies[i].Maximum" class="form-control" />
+                                <label>Every credit between the two above boxes that a citizen earns in a day will be taxed at (%)</label>
+                                <input asp-for="@Model.TaxPolicies[i].Rate" class="form-control" />
+                                @Html.HiddenFor(x => x.TaxPolicies[i].Id)
+                                @Html.HiddenFor(x => x.TaxPolicies[i].taxType)
+                                <span asp-validation-for="@Model.TaxPolicies[i].Rate" class="text-danger"></span>
+                            </div>
+                            <br>
+                            <br>
+                        }
+                    </div>
+                    <div class="m-2" style="width:300px;margin-left:70px !important;">
+                        <h4>Corporate Income Tax Rates (in %)</h4>
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @for (int i = 11; i < Model.TaxPolicies.Count(); i++) {
+                            <div class="form-group">
+                                <input asp-for="@Model.TaxPolicies[i].Minimum" class="form-control" />
+                                <input asp-for="@Model.TaxPolicies[i].Maximum" class="form-control" />
+                                <label>Every credit between the two above boxes that a company or corporation earns in a day will be taxed at (%)</label>
+                                <input asp-for="@Model.TaxPolicies[i].Rate" class="form-control" />
+                                @Html.HiddenFor(x => x.TaxPolicies[i].Id)
+                                @Html.HiddenFor(x => x.TaxPolicies[i].taxType)
+                                <span asp-validation-for="@Model.TaxPolicies[i].Rate" class="text-danger"></span>
+                            </div>
+                            <br>
+                            <br>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    <br />
+    <br />
+
+    @section Scripts {
+        @await Html.PartialAsync("_ValidationScriptsPartial")
+    }
+</div>
+</center>

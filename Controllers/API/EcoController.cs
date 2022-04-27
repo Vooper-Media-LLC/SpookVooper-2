@@ -48,16 +48,7 @@ namespace SV2.API
                 return;
             }
 
-            Transaction tran = new Transaction()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Credits = amount,
-                Time = DateTime.UtcNow,
-                FromId = fromid,
-                ToId = toid,
-                transactionType = trantype,
-                Details = detail
-            };
+            Transaction tran = new Transaction(fromid, toid, amount, trantype, detail);
 
             TaskResult result = await tran.Execute();
 

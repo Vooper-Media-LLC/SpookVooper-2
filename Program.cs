@@ -1,8 +1,30 @@
 global using SV2.Database;
+global using SV2.Database.Models.Districts;
+global using SV2.Database.Models.Economy;
+global using SV2.Database.Models.Entities;
+global using SV2.Database.Models.Factories;
+global using SV2.Database.Models.Forums;
+global using SV2.Database.Models.Government;
+global using SV2.Database.Models.Groups;
+global using SV2.Database.Models.Items;
+global using SV2.Database.Models.Military;
+global using SV2.Database.Models.Permissions;
+global using SV2.Database.Models.Buildings;
+global using SV2.Database.Models.Users;
+global using SV2.Database.Models.OAuth2;
+global using SV2.Models.Districts;
+global using SV2.Managers;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using SV2.API;
 using SV2.Workers;
+using SV2.Managers;
+using SV2.VoopAI;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.DataProtection;
+
+await VoopAI.Main();
 
 var builder = WebApplication.CreateBuilder(args);
 string CONF_LOC = "SV2Config/";
@@ -46,6 +68,14 @@ builder.Services.AddDbContextPool<VooperDB>(options =>
 });
 
 builder.Services.AddHostedService<EconomyWorker>();
+builder.Services.AddHostedService<TransactionWorker>();
+
+builder.Services.AddDataProtection().PersistKeysToDbContext<VooperDB>();
+
+builder.Services.AddSession(options =>
+    {
+        options.IdleTimeout = TimeSpan.FromDays(90);
+    });
 
 var app = builder.Build();
 
@@ -66,12 +96,20 @@ DevAPI         .AddRoutes(app);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+// ensure districts & Vooperia are created
+await VooperDB.Startup();
+await ResourceManager.Load();
 
 app.Run();

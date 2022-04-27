@@ -1,0 +1,12 @@
+@model string
+@{
+    ViewData["Title"] = "Login";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Please enter the following command on valour or the SpookVooper planet, "/login @Model"</p>
+
+<p>Press below when you have entered the command</p>
+<a href="/account/entered">
+    <button>Entered</button>
+</a>

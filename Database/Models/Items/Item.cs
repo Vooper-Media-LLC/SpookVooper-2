@@ -75,8 +75,21 @@ public class TradeItemDefinition : IHasOwner
     public string Name { get; set; }
 
     [VarChar(1024)]
-    public string Description { get; set; }
+    public string? Description { get; set; }
     public DateTime Created { get; set; }
     // json list of modifiers
-    public string Modifiers { get; set; }
+    public string? Modifiers { get; set; }
+
+    public TradeItemDefinition()
+    {
+
+    }
+
+    public TradeItemDefinition(string ownerid, string name)
+    {
+        Id = Guid.NewGuid().ToString();
+        OwnerId = ownerid;
+        Name = name;
+        Created = DateTime.UtcNow;
+    }
 }

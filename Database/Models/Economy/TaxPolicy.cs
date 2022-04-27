@@ -11,13 +11,15 @@ public enum TaxType
     Sales = 2,
     StockSale = 3,
     StockBought = 4,
-    PersonalIncome = 5,
-    CorporateIncome = 6,
-    GroupIncome = 7,
-    Payroll = 8,
+    Payroll = 5,
+    Balance = 6,
+    Wealth = 7,
     // only the imperial government can use this one
-    Inactivity = 9,
-    None = 10
+    Inactivity = 8,
+    None = 9,
+    PersonalIncome = 10,
+    CorporateIncome = 11,
+    GroupIncome = 12,
 }
 
 public class TaxPolicy
@@ -27,12 +29,14 @@ public class TaxPolicy
     public string Id { get; set; }
 
     [VarChar(64)]
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public decimal Rate { get; set; }
+    
     // should be null if this tax policy is by Vooperia
     [EntityId]
     public string? DistrictId { get; set; }
     public TaxType taxType { get; set; }
+
     // the min amount after which the tax has effect
     // example for Minimum and Maximum
     // if a sales tax has a min of $1 and a max of $3 then

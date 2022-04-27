@@ -154,7 +154,7 @@ public class Division : IHasOwner
                     attack += regiment.Count / 1000.0m * 9.0m;
                     break;
                 case RegimentType.Tank:
-                    attack += regiment.Count / 1000.0m * 20.0m;
+                    attack += regiment.Count / 1000.0m * 15.0m;
                     break;
                 case RegimentType.Mech:
                     attack += regiment.Count / 1000.0m * 60.0m;

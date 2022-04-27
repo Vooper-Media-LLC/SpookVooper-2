@@ -11,8 +11,30 @@ namespace SV2.API
     {
         public static void AddRoutes(WebApplication app)
         {
+            app.MapGet   ("api/item/{itemid}", GetItem);
             app.MapGet   ("api/item/{itemid}/give", Give);
             app.MapGet   ("api/item/{itemid}/owner", GetOwner);
+            app.MapGet   ("api/definition/{definitionid}/items", GetItemsFromDefinition);
+        }
+
+        private static async Task GetItemsFromDefinition(HttpContext ctx, VooperDB db, string definitionid)
+        {
+            IEnumerable<TradeItem> definitions = DBCache.GetAll<TradeItem>().Where(x => x.Definition_Id == definitionid);
+
+            await ctx.Response.WriteAsJsonAsync(definitions);
+        }
+
+        private static async Task GetItem(HttpContext ctx, VooperDB db, string itemid)
+        {
+            // find Item
+            TradeItem? item = DBCache.GetAll<TradeItem>().FirstOrDefault(x => x.Id == itemid);
+            if (item is null) {
+                ctx.Response.StatusCode = 401;
+                await ctx.Response.WriteAsync($"Could not find item with id {itemid}");
+                return;
+            }
+
+            await ctx.Response.WriteAsJsonAsync(item);
         }
 
         private static async Task GetOwner(HttpContext ctx, VooperDB db, string itemid)

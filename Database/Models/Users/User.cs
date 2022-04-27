@@ -9,7 +9,7 @@ namespace SV2.Database.Models.Users;
 public enum Rank
 {
     Spleen = 1,
-    Carb = 2,
+    Crab = 2,
     Gaty = 3,
     Corgi = 4,
     Oof = 5,
@@ -22,6 +22,8 @@ public class User : IEntity
     [EntityId]
     public string Id { get; set; }
 
+    [Column(TypeName = "bigint")]
+
     public ulong ValourId { get; set; }
 
     [VarChar(64)]
@@ -29,9 +31,9 @@ public class User : IEntity
 
     [VarChar(1024)]
     public string? Description { get; set; }
-    public int Xp { get; set;}
+    public float Xp { get; set;}
     public int ForumXp { get; set;}
-    public int MessageXp { get; set;}
+    public float MessageXp { get; set;}
     public int CommentLikes { get; set;}
     public int PostLikes { get; set;}
     public int Messages { get; set;}
@@ -41,7 +43,8 @@ public class User : IEntity
     [VarChar(36)]
     public string Api_Key { get; set; }
     public decimal Credits { get; set;}
-    public decimal CreditsYesterday { get; set;}
+    public decimal TaxAbleCredits { get; set; }
+    public List<decimal>? CreditSnapshots { get; set;}
     public Rank Rank { get; set;}
     // the datetime that this user created their account
     public DateTime Created { get; set; }
@@ -51,14 +54,20 @@ public class User : IEntity
 
     [EntityId]
     public string? DistrictId { get; set;}
-    public static async Task<User?> FindAsync(string Id)
+
+    public bool IsMinister(Ministers minister)
     {
-        if (DBCache.Contains<User>(Id)) {
-            return DBCache.Get<User>(Id);
-        }
-        User? user = await VooperDB.Instance.Users.FindAsync(Id);
-        await DBCache.Put<User>(Id, user);
-        return user;
+        return false;
+    }
+
+    public static User? FindByName(string name)
+    {
+        return DBCache.GetAll<User>().FirstOrDefault(x => x.Name == name);
+    }
+    
+    public static User? Find(string Id)
+    {
+        return DBCache.Get<User>(Id);
     }
 
     public bool HasPermissionWithKey(string apikey, GroupPermission permission)
@@ -90,7 +99,7 @@ public class User : IEntity
         CommentLikes = 0;
         Api_Key = Guid.NewGuid().ToString();
         Credits = 0.0m;
-        CreditsYesterday = 0.0m;
+        CreditSnapshots = new();
         Rank = Rank.Unranked;
         Created = DateTime.UtcNow;
     }

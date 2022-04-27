@@ -1,8 +1,9 @@
 @using SV2.Models;
+@using SV2.Managers;
 
 @inject VooperDB context
 
-@if (false)//SignInManager.IsSignedIn(User))
+@if (UserManager.GetUser(Context) is not null)
 {
     <div class="nav navbar-nav navbar-right">
 
@@ -33,7 +34,7 @@
 
                 <ul style="align-content: center; align-items: center" class="nav navbar-nav navbar-right">
                     <li>
-                        <a style="justify-content: center" asp-controller="Manage" asp-action="Index" title="Manage">Hello <!--UserManager.GetUserName(User) --> </a>
+                        <a style="justify-content: center" asp-controller="Account" asp-action="Manage" title="Manage">Hello @UserManager.GetUser(Context)!.Name </a>
                     </li>
                     <li>
                         <button style="justify-content: center" type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button>

@@ -35,12 +35,13 @@ public class CreditAccount : IHasOwner, IEntity
 
     [JsonIgnore]
     public string Api_Key { get; set; }
-    public decimal Credits { get; set;}
+    public decimal Credits { get; set; }
+    public decimal TaxAbleCredits { get; set; }
 
     [EntityId]
     public string? DistrictId { get; set; }
     // used for tax purposes
-    public decimal CreditsYesterday { get; set;}
+    public List<decimal> CreditSnapshots { get; set;}
 
     public bool HasPermissionWithKey(string apikey, GroupPermission permission)
     {

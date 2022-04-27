@@ -1,0 +1,165 @@
+@model Group
+
+<head>
+    <meta property="og:title" content="@Model.Name">
+    <meta name="keywords" content="Group, SpookVooper, @Model.Name">
+    <meta property="og:description" content="@Model.Description">
+    <meta property="og:url" content="https://spookvooper.com/Group/View?groupid=@Model.Id">
+    <meta property="og:image" content="@Model.Image_Url">
+    <meta name="twitter:image" content="@Model.Image_Url">
+</head>
+
+
+@if (Model != null)
+{
+
+    ViewData["Title"] = Model.Name;
+
+    User user = UserManager.GetUser(Context)!;
+
+    // Add auth for roles later
+    //if (user != null && Model.own == user.Id)
+    //{
+    //    <a asp-action="SetInfo" asp-controller="User" class="btn btn-primary">Modify</a>
+    //}
+
+    <div class="container vw-100">
+        <div class="col-12">
+
+            @await Html.PartialAsync("_StatusMessage", TempData["StatusMessage"])
+
+            <h1 style="text-align:center" class="display-4">@Model.Name</h1>
+            <h2 style="text-align:center" class="display-4">In: @Model.GroupType.ToString()</h2>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <div>
+                            <br />
+
+                            @await Component.InvokeAsync("GroupImage", Model)
+                        </div>
+                    </div>
+                    <div class="col-sm-4"></div>
+                </div>
+            </div>
+
+            @if (!String.IsNullOrWhiteSpace(Model.DistrictId))
+            {
+                <p class="m-2" style="text-align:center; font-size:x-large">District: @District.Find(Model.DistrictId).Name</p>
+            }
+            else
+            {
+                <p class="m-2" style="text-align:center; font-size:x-large">District: Offworld</p>
+            }
+
+            @if (user != null)
+            {
+                <div class="d-flex row justify-content-center">
+                    @if (!Model.IsInGroup(user))
+                    {
+                        <div class="p-2 align-self-center" style="text-align:center">
+                            <a asp-action="Join" asp-controller="Group" asp-route-id="@Model.Id" class="btn btn-outline-primary">Join Group</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-2 align-self-center" style="text-align:center">
+                            <a asp-action="Leave" asp-controller="Group" asp-route-id="@Model.Id" class="btn btn-outline-danger">Leave Group</a>
+                        </div>
+                    }
+                    @if (Model.HasPermission(user, GroupPermissions.Edit))
+                    {
+                        <div class="p-2 align-self-center" style="text-align:center">
+                            <a asp-action="Edit" asp-controller="Group" asp-route-id="@Model.Id" class="btn btn-outline-warning">Edit</a>
+                        </div>
+                    }
+                    @if (Model.HasPermission(user, GroupPermissions.ManageInvites))
+                    {
+                        <div class="p-2 align-self-center" style="text-align:center">
+                            <a asp-action="Invite" asp-controller="Group" asp-route-id="@Model.Id" class="btn btn-outline-primary">Invite</a>
+                        </div>
+                    }
+
+                    @if (Model.Flags.Contains(GroupFlag.News))
+                    {
+                        @if (Model.HasPermission(user, GroupPermissions.News))
+                        {
+                            <div class="p-2 align-self-center" style="text-align:center">
+                                <a asp-action="Create" asp-controller="News" asp-route-groupid="@Model.Id" class="btn btn-outline-primary">New Story</a>
+                            </div>
+                        }
+
+                        /* TODO: Fix MoJ
+                        @if (user.HasDiscordRole("Minister of Journalism"))
+                        {
+                            <div class="p-2 align-self-center" style="text-align:center">
+                                <a asp-action="RemovePressPass" asp-controller="News" asp-route-groupid="@Model.Id" class="btn btn-outline-danger">Revoke Pass</a>
+                            </div>
+                        }
+                        */
+                    }
+                    else
+                    {
+                        /*
+                        if (user.HasDiscordRole("Minister of Journalism"))
+                        {
+                            <div class="p-2 align-self-center" style="text-align:center">
+                                <a asp-action="AddPressPass" asp-controller="News" asp-route-groupid="@Model.Id" class="btn btn-outline-warning">Give Pass</a>
+                            </div>
+                        }
+                        */
+                    }
+
+                </div>
+            }
+
+            @if (Model.Description != null)
+            {
+                <br />
+                <p class="p m-2" style="font-size:large; text-align:center">@Html.Raw(Westwind.AspNetCore.Markdown.Markdown.Parse(Model.Description, sanitizeHtml: true))</p>
+                <br />
+            }
+
+            <br />
+            <hr />
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="d-flex justify-content-center flex-wrap">
+            <div class="m-2" style="width:500px">
+                <h2>Recent Posts</h2>
+                <br />
+            </div>
+            <div class="m-2" style="width:500px">
+                <h2>Members</h2>
+                <br />
+                <div class="container">
+                    <div class="row">
+                        @foreach (User member in Model.GetMembers())
+                        {
+                            <div class="col-6 memberbox">
+                                <div class="m-2">
+                                    <img class="memberpfp" src="@member.Image_Url" />
+                                </div>
+                                <a asp-controller="User" asp-action="Info" asp-route-svid="@member.Id">
+                                    <p class="nametext" style="max-width:60%; color:#@Model.GetHighestRole(member).Color">@member.Name</p>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container vw-100">
+        <div class="col-12">
+            <h1 style="text-align:center" class="display-4">Group not found!</h1>
+        </div>
+    </div>
+}
